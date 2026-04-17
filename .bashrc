@@ -150,6 +150,11 @@ _set_terminal_bg() {
 
 _set_terminal_bg
 
+# Re-apply when inside tmux, since tmux starts new panes with a fresh shell
+if [ -n "$TMUX" ]; then
+  _set_terminal_bg
+fi
+
 # Restore local terminal color after SSH exits
 ssh() {
   command ssh "$@"
