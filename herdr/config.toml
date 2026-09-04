@@ -1,0 +1,64 @@
+# Herdr configuration
+# Docs: https://herdr.dev/docs/config-reference/
+
+[theme]
+# Clean baseline: readable built-in theme, no custom token overrides.
+# Swap for any of: catppuccin, terminal, tokyo-night, dracula, nord,
+#   gruvbox, one-dark, solarized, kanagawa, rose-pine, vesper
+name = "tokyo-night"
+
+# tokyo-night gives us the colored top tab bar. The ACTIVE-TAB INDICATOR is driven
+# by the theme `accent` token (confirmed via diagnostic probe in Ghostty: setting
+# accent yellow turned the active tab yellow). Set it teal for a teal current-tab
+# highlight that matches the side-nav aesthetic.
+# NOTE: this only renders in a true-color terminal (Ghostty/iTerm2) — macOS
+# Terminal.app silently drops these [theme.custom] overrides, which is why earlier
+# edits appeared to do nothing.
+[theme.custom]
+accent = "#7dcfff"   # tokyo-night native teal/cyan (swap to #94e2d5 for the old catppuccin teal)
+
+[ui]
+# Teal accent for the active-row / indicator highlights.
+# Explicit catppuccin teal (#94e2d5) instead of named "cyan": the named color
+# resolves from the terminal's ANSI palette (terminal-dependent, can render dim),
+# whereas the hex is a true 24-bit teal that matches the sidebar's theme teal.
+accent = "#94e2d5"
+
+[keys]
+# --- Full-screen-pane workflow: repurpose vim motions ---
+# With one full-screen pane per view, prefix+h/j/k/l pane-focus is wasted,
+# so we remap it to tab/workspace/agent navigation that matches the UI layout:
+#   horizontal (h/l) = the horizontal tab bar
+#   vertical   (j/k) = the vertical workspace sidebar
+
+# Horizontal (h/l) -> move ACROSS TABS
+previous_tab = ["prefix+h", "prefix+p"]   # left  (keeps default p as backup)
+next_tab     = ["prefix+l", "prefix+n"]   # right (keeps default n as backup)
+
+# Vertical (j/k) -> move THROUGH WORKSPACES
+next_workspace     = "prefix+j"           # down the sidebar list
+previous_workspace = "prefix+k"           # up the sidebar list
+
+# Space -> cycle AGENTS in the agent panel
+next_agent     = "prefix+space"
+previous_agent = "prefix+shift+space"     # reverse
+
+# Panes: SHIFTED vim motions (prefix+shift+h/j/k/l) keep pane-focus vim-like
+# without colliding with the unshifted tab/workspace bindings above.
+# Ghostty speaks the Kitty keyboard protocol, so it reports shift+letter
+# distinctly from the plain letter (older terminals collapse the two).
+# Arrows kept as a fallback in case the disambiguation doesn't come through.
+focus_pane_left  = ["prefix+shift+h", "prefix+left"]
+focus_pane_down  = ["prefix+shift+j", "prefix+down"]
+focus_pane_up    = ["prefix+shift+k", "prefix+up"]
+focus_pane_right = ["prefix+shift+l", "prefix+right"]
+
+# Splits: tmux muscle memory.
+#   prefix+"  -> split_horizontal (stacked top/bottom)  [tmux: prefix "]
+#   prefix+%  -> split_vertical   (side-by-side L/R)     [tmux: prefix %]
+# Punctuation is named by its produced character (herdr convention: ampersand,
+# plus, ...), so " is `double_quote` and % is `percent`. The literal " can't be
+# written here anyway — it would terminate the TOML string.
+# Defaults (prefix+minus / prefix+v) kept as fallbacks.
+split_horizontal = ["prefix+double_quote", "prefix+minus"]
+split_vertical   = ["prefix+percent", "prefix+v"]
