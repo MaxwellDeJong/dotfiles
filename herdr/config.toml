@@ -25,33 +25,32 @@ accent = "#7dcfff"   # tokyo-night native teal/cyan (swap to #94e2d5 for the old
 accent = "#94e2d5"
 
 [keys]
-# --- Full-screen-pane workflow: repurpose vim motions ---
-# With one full-screen pane per view, prefix+h/j/k/l pane-focus is wasted,
-# so we remap it to tab/workspace/agent navigation that matches the UI layout:
-#   horizontal (h/l) = the horizontal tab bar
-#   vertical   (j/k) = the vertical workspace sidebar
+# --- Vim-motion navigation ---
+# Unshifted h/j/k/l = pane focus (the default, tmux/vim-like).
+# Shifted   H/J/K/L = tab/workspace navigation, matching the UI layout:
+#   horizontal (H/L) = the horizontal tab bar
+#   vertical   (J/K) = the vertical workspace sidebar
+# Ghostty speaks the Kitty keyboard protocol, so it reports shift+letter
+# distinctly from the plain letter (older terminals collapse the two) —
+# hence the p/n and arrow fallbacks below.
 
-# Horizontal (h/l) -> move ACROSS TABS
-previous_tab = ["prefix+h", "prefix+p"]   # left  (keeps default p as backup)
-next_tab     = ["prefix+l", "prefix+n"]   # right (keeps default n as backup)
+# Panes: plain h/j/k/l (arrows kept as a fallback)
+focus_pane_left  = ["prefix+h", "prefix+left"]
+focus_pane_down  = ["prefix+j", "prefix+down"]
+focus_pane_up    = ["prefix+k", "prefix+up"]
+focus_pane_right = ["prefix+l", "prefix+right"]
 
-# Vertical (j/k) -> move THROUGH WORKSPACES
-next_workspace     = "prefix+j"           # down the sidebar list
-previous_workspace = "prefix+k"           # up the sidebar list
+# Horizontal (H/L) -> move ACROSS TABS
+previous_tab = ["prefix+shift+h", "prefix+p"]   # left  (keeps default p as backup)
+next_tab     = ["prefix+shift+l", "prefix+n"]   # right (keeps default n as backup)
+
+# Vertical (J/K) -> move THROUGH WORKSPACES
+next_workspace     = "prefix+shift+j"           # down the sidebar list
+previous_workspace = "prefix+shift+k"           # up the sidebar list
 
 # Space -> cycle AGENTS in the agent panel
 next_agent     = "prefix+space"
 previous_agent = "prefix+shift+space"     # reverse
-
-# Panes: SHIFTED vim motions (prefix+shift+h/j/k/l) keep pane-focus vim-like
-# without colliding with the unshifted tab/workspace bindings above.
-# Ghostty speaks the Kitty keyboard protocol, so it reports shift+letter
-# distinctly from the plain letter (older terminals collapse the two).
-# Arrows kept as a fallback in case the disambiguation doesn't come through.
-focus_pane_left  = ["prefix+shift+h", "prefix+left"]
-focus_pane_down  = ["prefix+shift+j", "prefix+down"]
-focus_pane_up    = ["prefix+shift+k", "prefix+up"]
-focus_pane_right = ["prefix+shift+l", "prefix+right"]
 
 # Splits: tmux muscle memory.
 #   prefix+"  -> split_horizontal (stacked top/bottom)  [tmux: prefix "]
@@ -59,6 +58,12 @@ focus_pane_right = ["prefix+shift+l", "prefix+right"]
 # Punctuation is named by its produced character (herdr convention: ampersand,
 # plus, ...), so " is `double_quote` and % is `percent`. The literal " can't be
 # written here anyway — it would terminate the TOML string.
-# Defaults (prefix+minus / prefix+v) kept as fallbacks.
-split_horizontal = ["prefix+double_quote", "prefix+minus"]
+# Default prefix+v kept as a fallback for split_vertical; the default
+# prefix+minus is repurposed for last_pane below.
+split_horizontal = "prefix+double_quote"
 split_vertical   = ["prefix+percent", "prefix+v"]
+
+# prefix then - -> jump back to the previously focused pane, like `git checkout -`.
+# Stand-in for tmux's recency-aware directional focus, which herdr lacks
+# (directional focus is purely geometric; see herdr#3943, closed not-planned).
+last_pane = "prefix+minus"
